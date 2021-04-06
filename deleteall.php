@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,34 +19,34 @@
  * Version details
  *
  * @package    local_message
- * @copyright  Pablo Rodriguez
+ * @copyright   onwards Martin Dougiamas (http://dougiamas.
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @var stdClass $plugin
  */
 
 require_once(__DIR__ . '/../../config.php');
-global $DB;
+require_once($CFG->dirroot . '/local/message/classes/form/deleteall.php');
 
-$PAGE->set_url(new moodle_url('/local/message/manage.php'));
+$PAGE->set_url(new moodle_url('/local/message/deleteall.php'));
 $PAGE->set_context(\context_system::instance());
-$PAGE->set_title('Manage messages');
+$PAGE->set_title('Delete All');
 
-$messages = $DB->get_records('local_message');
+//We want to display our form
+$mform = new deleteall();
 
-//Displays html
+if ($mform->is_cancelled()) {
+    //Go back to manage.php page
+    redirect($CFG->wwwroot . '/local/message/manage.php', 'Not deleted!');
+} else if ($fromform = $mform->get_data()) {
+    $conditions = []; //delete all messages
+    $DB->delete_records('local_message', $conditions);
+
+    //Go back to manage.php page
+    redirect(
+        $CFG->wwwroot . '/local/message/manage.php',
+        'You deleted all messages'
+    );
+}
+
 echo $OUTPUT->header();
-
-//Hacemos array_values porque el array messages empieza en 1 y no 0
-//esto implica que el template no coja bien el array
-//Array_values nos devuelve un array con los mismos valores
-//que message pero empezando desde 0
-$templatecontext =(object)[
-    'messages' =>  array_values($messages),
-    'editurl'  => new moodle_url('/local/message/edit.php'),
-    'deleteurl' => new moodle_url('/local/message/delete.php'),
-    'updateurl' => new moodle_url('/local/message/update.php'),
-    'deleteallurl' => new moodle_url('/local/message/deleteall.php'),
-];
-echo $OUTPUT->render_from_template('local_message/manage',$templatecontext);
-
+$mform->display();
 echo $OUTPUT->footer();

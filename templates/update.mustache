@@ -15,30 +15,15 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template local_message/manage
+    @template local_message/update
 
 
     Example context (json):
     {
-
+        
     }
 }}
 
-<h1>List of messages</h1>
-{{#messages}}
-    <em>-{{messagetext}}</em>, Notification type: {{messagetype}}
-
-    <input type="button" name="delete"
-           value="Delete message" data-id="{{ id }}" onclick="location.href='{{deleteurl}}?id={{id}}'">
-
-    <input type="button" name="edit"
-           value="Edit message" data-id="{{ id }}" onclick="location.href='{{updateurl}}?id={{id}}'">
-    <br><br>
-{{/messages}}
-
-<hr>
-<input type="button" class="btn btn-primary"
-       value="Create message" onclick="location.href='{{editurl}}'">
-
-<input type="button" class="btn btn-primary" 
-    value="Delete all messages" onclick="location.href='{{deleteallurl}}'">
+<h1>Update message</h1>
+<p>{{ texttodisplay }}</p>
+<p>{{ ola }}</p>
