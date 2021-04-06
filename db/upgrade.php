@@ -46,6 +46,7 @@ defined('MOODLE_INTERNAL') || die;
 function xmldb_local_message_upgrade($oldversion) {
     global $CFG,$DB;
     $dbman = $DB->get_manager();
+    $dbman->generator->foreign_keys=true;
 
     //Aqui se pone el codigo php del editor XMLDB
     if ($oldversion < $oldversion + 1) {
@@ -104,8 +105,11 @@ function xmldb_local_message_upgrade($oldversion) {
         $dbman->change_field_type($table,$new_field_messagetype);
 
         //Test de indices en el campo messagetext
-        $indice_table= new xmldb_index('messagetext', XMLDB_INDEX_NOTUNIQUE, array('messagetext'));
-        $dbman->add_index($table,$indice_table);
+        $index = new xmldb_index('messagetext', XMLDB_INDEX_NOTUNIQUE, ['messagetext']);
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+        
 
 
         /*****************************/
